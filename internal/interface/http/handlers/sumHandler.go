@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"123/models"
+	"fib/internal/models"
 
 	"github.com/gofiber/fiber/v2"
 )

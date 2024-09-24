@@ -2,23 +2,19 @@ package middleware
 
 import (
 	"context"
+	"fib/pkg/logger"
 	"fmt"
-
 	"log/slog"
-	"os"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-func nLogger() *slog.Logger {
-	return slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{}))
-}
-
 func LoggingMiddleware(c *fiber.Ctx) error {
 	start := time.Now()
 	bodyBytes := c.Body()
-	l := nLogger()
+
+	lg := logger.NewLogger()
 
 	err := c.Next()
 	if err != nil {
@@ -37,7 +33,7 @@ func LoggingMiddleware(c *fiber.Ctx) error {
 		duration,
 	)
 
-	l.Log(context.Background(), slog.LevelInfo, logMessage)
+	lg.Log(context.Background(), slog.LevelInfo, logMessage)
 
 	return nil
 }

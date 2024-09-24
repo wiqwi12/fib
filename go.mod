@@ -1,4 +1,4 @@
-module 123
+module fib
 
 go 1.23.0
 
