@@ -1,19 +1,29 @@
 package main
 
 import (
-	"fib/internal/interface/http/handlers"
-	"fib/internal/interface/http/middleware"
+	"fib/internal/interface/http/server"
+	"fib/internal/interface/http/server/config"
 	"log"
+	"os"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	app := fiber.New()
-	app.Use(middleware.LoggingMiddleware)
-	app.Post("/", handlers.SumHandler)
 
-	if err := app.Listen(":3000"); err != nil {
-		log.Fatal(err)
+	if err := godotenv.Load(); err != nil {
+		log.Print(err)
 	}
+
+	cfg := config.Config{
+		Adr:   os.Getenv("ADR_PATH"),
+		Token: os.Getenv("API_TOKEN"),
+	}
+
+	srv := server.NewServer(cfg.Adr)
+
+	if err := srv.Run(); err != nil {
+		log.Print("run err")
+	}
+
 }
