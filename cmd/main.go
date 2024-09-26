@@ -20,7 +20,10 @@ func main() {
 		Token: os.Getenv("API_TOKEN"),
 	}
 
-	srv := server.NewServer(cfg.Adr)
+	srv := server.NewServer(
+		cfg.Adr,
+		cfg.Token,
+	)
 
 	if err := srv.Run(); err != nil {
 		log.Print("run err")
