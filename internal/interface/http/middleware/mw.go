@@ -1,39 +1,37 @@
 package middleware
 
 import (
-	"context"
-	"fib/pkg/logger"
-	"fmt"
-	"log/slog"
-	"time"
+	"log"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-func LoggingMiddleware(c *fiber.Ctx) error {
-	start := time.Now()
-	bodyBytes := c.Body()
+func AuthMiddleware(apiToken string) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		requestToken := c.Get("API_TOKEN")
 
-	lg := logger.NewLogger()
-
-	err := c.Next()
-	if err != nil {
-		return err
+		if requestToken != apiToken {
+			log.Print("wrong token")
+			return c.SendStatus(fiber.StatusUnauthorized)
+		}
+		return c.Next()
 	}
 
-	statusCode := c.Response().StatusCode()
-	responseBody := c.Response().Body()
-	duration := time.Since(start).Milliseconds()
-
-	logMessage := fmt.Sprintf("TIME: %s, REQ: %s, RES: %s, CODE: %d, DUR: %d ms",
-		start.Format(time.RFC3339),
-		string(bodyBytes),
-		string(responseBody),
-		statusCode,
-		duration,
-	)
-
-	lg.Log(context.Background(), slog.LevelInfo, logMessage)
-
-	return nil
 }
+
+// func LoggingMiddleware(lg *slog.Logger) fiber.Handler {
+// 	// Инициализация логгера с конфигурацией
+// 	log := slogfiber.NewWithConfig(lg, config.LoggerCfg)
+
+// 	return func(c *fiber.Ctx) error {
+// 		// Вызов следующего хэндлера в цепочке
+// 		err := c.Next()
+// 		if err != nil {
+// 			return err
+// 		}
+
+// 		// Логируем информацию о запросе и ответе автоматически на основе конфигурации
+
+// 		return nil
+// 	}
+// }
